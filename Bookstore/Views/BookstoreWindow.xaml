@@ -29,12 +29,80 @@
             <Button Grid.Column="4" Margin="5" Style="{StaticResource ButtonStyle}" Content="Reset"/>
         </Grid>
 
-        <DataGrid Grid.Row="1" Margin="5">
+        <DataGrid Grid.Row="1" Margin="5" AutoGenerateColumns="True">
 
         </DataGrid>
 
-        <Grid Grid.Row="2" Margin="5">
+        <Grid Grid.Row="2" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <UniformGrid Grid.Row="0" Margin="5" Columns="2" Style="{StaticResource UniformGridStyle}">
+                <DockPanel>
+                    <Label Content="Title:"/>
+                    <TextBox/>
+                </DockPanel>
 
+                <DockPanel>
+                    <Label Content="Publisher:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Author name:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Pages:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Author surname:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Genre:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Author patronymic"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Year:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Cost price:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Series:"/>
+                    <TextBox/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Sale price:"/>
+                    <TextBox/>
+                </DockPanel>
+            </UniformGrid>
+
+            <StackPanel Grid.Row="1" Style="{StaticResource ButtonStackPanelStyle}" HorizontalAlignment="Right">
+                <Button Content="Save"/>
+                <Button Content="Create"/>
+                <Button Content="Cancel"/>
+                <Button Content="Clear"/>
+                <Button Content="Delete"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

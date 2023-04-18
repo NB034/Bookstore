@@ -13,4 +13,45 @@
         </Style.Resources>
     </Style>
     
+    
+
+    <Style TargetType="TextBox" x:Key="TextBoxStyle">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+    
+    
+
+    <Style TargetType="UniformGrid" x:Key="UniformGridStyle">
+        <Style.Resources>
+            <Style TargetType="DockPanel">
+                <Setter Property="LastChildFill" Value="True"/>
+                <Setter Property="Margin" Value="3"/>
+
+                <Style.Resources>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxStyle}"/>
+                </Style.Resources>
+            </Style>
+        </Style.Resources>
+    </Style>
+
+
+
+    <Style TargetType="StackPanel" x:Key="ButtonStackPanelStyle">
+        <Setter Property="Orientation" Value="Horizontal"/>
+
+        <Style.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+                <Setter Property="Margin" Value="5"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+    
 </ResourceDictionary>
