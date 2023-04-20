@@ -7,7 +7,7 @@ namespace Bookstore.DataAccess.Entities
         public string Title { get; set; }
         public string Description { get; set; }
         public int Pages { get; set; }
-        public DateOnly PublicationYear { get; set; }
+        public int PublicationYear { get; set; }
         public int Quantity { get; set; }
         public int CostPrice { get; set; }
         public int SalePrice { get; set; }

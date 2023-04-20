@@ -5,7 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bookstore"
         mc:Ignorable="d"
-        Title="Bookstore" Height="450" Width="800">
+        xmlns:vm="clr-namespace:Bookstore.ViewModels"
+        Title="Bookstore" Height="600" Width="800"
+        d:DataContext="{d:DesignInstance vm:BookstoreViewModel}">
+    
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,13 +26,18 @@
             </Grid.ColumnDefinitions>
 
             <Label Grid.Column="0" Margin="5" Content="Search by:"/>
-            <ComboBox Grid.Column="1" Margin="5"/>
-            <TextBox Grid.Column="2" Margin="5"/>
-            <Button Grid.Column="3" Margin="5" Style="{StaticResource ButtonStyle}" Content="Search"/>
-            <Button Grid.Column="4" Margin="5" Style="{StaticResource ButtonStyle}" Content="Reset"/>
+            <ComboBox Grid.Column="1" Margin="5" 
+                      ItemsSource="{Binding ComboBoxItems}" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}"/>
+            <TextBox Grid.Column="2" Margin="5" Style="{StaticResource TextBoxStyle}"
+                     Text="{Binding SearchTextBox}"/>
+            <Button Grid.Column="3" Margin="5" Style="{StaticResource ButtonStyle}" Content="Search"
+                    Command="{Binding SearchCommand}"/>
+            <Button Grid.Column="4" Margin="5" Style="{StaticResource ButtonStyle}" Content="Reset"
+                    Command="{Binding ResetCommand}"/>
         </Grid>
 
-        <DataGrid Grid.Row="1" Margin="5" AutoGenerateColumns="True">
+        <DataGrid Grid.Row="1" Margin="5" AutoGenerateColumns="True" Style="{StaticResource DataGridStyle}"
+                  SelectionUnit="FullRow" SelectedItem="{Binding SelectedBook, Mode=TwoWay}">
 
         </DataGrid>
 
@@ -42,66 +50,76 @@
             <UniformGrid Grid.Row="0" Margin="5" Columns="2" Style="{StaticResource UniformGridStyle}">
                 <DockPanel>
                     <Label Content="Title:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding Title, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Publisher:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding Publisher, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Author name:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding AuthorName, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Pages:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding Pages, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Author surname:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding AuthorSurname, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Genre:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding Genre, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Author patronymic"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding AuthorPatronymic, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Year:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding PublicationYear, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Cost price:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding CostPrice, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Series:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding Series, Mode=TwoWay}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Sale price:"/>
-                    <TextBox/>
+                    <TextBox Text="{Binding SalePrice, Mode=TwoWay}"/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Description:"/>
+                    <TextBox Text="{Binding Description, Mode=TwoWay}"/>
+                </DockPanel>
+
+                <DockPanel>
+                    <Label Content="Quantity:"/>
+                    <TextBox Text="{Binding Quantity, Mode=TwoWay}"/>
                 </DockPanel>
             </UniformGrid>
 
             <StackPanel Grid.Row="1" Style="{StaticResource ButtonStackPanelStyle}" HorizontalAlignment="Right">
-                <Button Content="Save"/>
-                <Button Content="Create"/>
-                <Button Content="Cancel"/>
-                <Button Content="Clear"/>
-                <Button Content="Delete"/>
+                <Button Content="Save" Command="{Binding SaveCommand}"/>
+                <Button Content="Create" Command="{Binding CreateCommand}"/>
+                <Button Content="Cancel" Command="{Binding CancelCommand}"/>
+                <Button Content="Clear" Command="{Binding ClearCommand}"/>
+                <Button Content="Delete" Command="{Binding DeleteCommand}"/>
             </StackPanel>
         </Grid>
     </Grid>

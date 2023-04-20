@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.DataAccess.Contexts
 {
-    internal class BookstoreDbContext : DbContext
+    public class BookstoreDbContext : DbContext
     {
         public BookstoreDbContext(DbContextOptions options) : base(options)
         {
