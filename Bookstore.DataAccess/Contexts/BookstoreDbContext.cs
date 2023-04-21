@@ -14,7 +14,6 @@ namespace Bookstore.DataAccess.Contexts
         public virtual DbSet<BookEntity> BookEntities { get; set; }
         public virtual DbSet<GenreEntity> GenreEntities { get; set; }
         public virtual DbSet<PublisherEntity> PublisherEntities { get; set; }
-        public virtual DbSet<SaleEntity> SaleEntities { get; set; }
         public virtual DbSet<SeriesEntity> SeriesEntities { get; set; }
     }
 }

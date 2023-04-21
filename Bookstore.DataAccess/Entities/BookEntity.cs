@@ -1,7 +1,7 @@
 ﻿
 namespace Bookstore.DataAccess.Entities
 {
-    internal class BookEntity
+    public class BookEntity
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -21,7 +21,5 @@ namespace Bookstore.DataAccess.Entities
         public AuthorEntity Author { get; set; }
         public PublisherEntity Publisher { get; set; }
         public SeriesEntity Series { get; set; }
-
-        public virtual ICollection<SaleEntity> Sales { get; set; }
     }
 }

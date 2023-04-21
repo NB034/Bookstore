@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bookstore.ViewModels
 {
-    internal class BookstoreViewModel : INotifyPropertyChanged
+    internal partial class BookstoreViewModel : INotifyPropertyChanged
     {
         private readonly IBookstoreModel _model;
 
@@ -29,14 +27,7 @@ namespace Bookstore.ViewModels
         private string _publisher = "";
         private string _series = "";
 
-        private readonly AutoEventCommandBase _searchCommand;
-        private readonly AutoEventCommandBase _resetCommand;
-        private readonly AutoEventCommandBase _saveCommand;
-        private readonly AutoEventCommandBase _createCommand;
-        private readonly AutoEventCommandBase _cancelCommand;
-        private readonly AutoEventCommandBase _clearCommand;
-        private readonly AutoEventCommandBase _deleteCommand;
-
+        private List<BookViewModel> _books;
         private bool IsBookSelected => _selectedBook != null;
 
         private bool IsRequiredFieldsEmpty => _title == String.Empty
@@ -79,6 +70,8 @@ namespace Bookstore.ViewModels
                 "Genre"
             };
 
+            Books = new List<BookViewModel>(_model.GetBooks());
+
             _searchCommand = new AutoEventCommandBase(_ => Search(), _ => true);
             _resetCommand = new AutoEventCommandBase(_ => Reset(), _ => true);
             _saveCommand = new AutoEventCommandBase(_ => Save(), _ => CanSave());
@@ -89,8 +82,6 @@ namespace Bookstore.ViewModels
 
             PropertyChanged += OnSelectionChange;
         }
-
-        public ObservableCollection<BookViewModel> Books { get; private set; }
 
         public BookViewModel SelectedBook { get => _selectedBook; set => SetProperty(ref _selectedBook, value, nameof(SelectedBook)); }
         public string Title { get => _title; set => SetProperty(ref _title, value, nameof(Title)); }
@@ -107,9 +98,60 @@ namespace Bookstore.ViewModels
         public string Publisher { get => _publisher; set => SetProperty(ref _publisher, value, nameof(Publisher)); }
         public string Series { get => _series; set => SetProperty(ref _series, value, nameof(Series)); }
 
+        public List<BookViewModel> Books { get => _books; set => SetProperty(ref _books, value, nameof(Books)); }
+
         public List<string> ComboBoxItems { get; }
         public string SelectedItem { get; set; }
         public string SearchTextBox { get; set; }
+
+        private void OnSelectionChange(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(SelectedBook)) return;
+            if (SelectedBook == null)
+            {
+                Clear();
+                return;
+            }
+
+            Title = SelectedBook.Title;
+            Description = SelectedBook.Description;
+            Pages = SelectedBook.Pages;
+            PublicationYear = SelectedBook.PublicationYear;
+            Quantity = SelectedBook.Quantity;
+            CostPrice = SelectedBook.CostPrice;
+            SalePrice = SelectedBook.SalePrice;
+            Genre = SelectedBook.Genre;
+            AuthorName = SelectedBook.AuthorName;
+            AuthorSurname = SelectedBook.AuthorSurname;
+            AuthorPatronymic = SelectedBook.AuthorPatronymic;
+            Publisher = SelectedBook.Publisher;
+            Series = SelectedBook.Series;
+        }
+
+        private void SetProperty<T>(ref T oldValue, T newValue, string propertyName)
+        {
+            if (!oldValue?.Equals(newValue) ?? newValue != null)
+            {
+                oldValue = newValue;
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+
+
+
+
+    // Commands section
+    internal partial class BookstoreViewModel
+    {
+        private readonly AutoEventCommandBase _searchCommand;
+        private readonly AutoEventCommandBase _resetCommand;
+        private readonly AutoEventCommandBase _saveCommand;
+        private readonly AutoEventCommandBase _createCommand;
+        private readonly AutoEventCommandBase _cancelCommand;
+        private readonly AutoEventCommandBase _clearCommand;
+        private readonly AutoEventCommandBase _deleteCommand;
 
         public AutoEventCommandBase SearchCommand => _searchCommand;
         public AutoEventCommandBase ResetCommand => _resetCommand;
@@ -121,12 +163,35 @@ namespace Bookstore.ViewModels
 
         private void Search()
         {
+            BookViewModel[] selection;
+            switch (SelectedItem)
+            {
+                case "Title":
+                    selection = Books.Where(b => b.Title.Contains(SearchTextBox)).ToArray();
+                    break;
 
+                case "Author":
+                    selection = Books.Where(b =>
+                    b.AuthorName.Contains(SearchTextBox)
+                    || b.AuthorSurname.Contains(SearchTextBox)
+                    || b.AuthorPatronymic.Contains(SearchTextBox)).ToArray();
+                    break;
+
+                case "Genre":
+                    selection = Books.Where(b => b.Genre.Contains(SearchTextBox)).ToArray();
+                    break;
+
+                default:
+                    return;
+            }
+
+            Reset();
         }
 
         private void Reset()
         {
-            Books = new ObservableCollection<BookViewModel>(_model.GetBooks());
+            Books.Clear();
+            Books = new List<BookViewModel>(_model.GetBooks());
             SelectedBook = null;
         }
 
@@ -147,63 +212,73 @@ namespace Bookstore.ViewModels
                 Publisher = SelectedBook.Publisher,
                 Series = SelectedBook.Series
             });
+            Reset();
         }
 
         private bool CanSave() => WereFieldChanged && !IsRequiredFieldsEmpty && IsNumericFieldsCorrect;
 
         private void Create()
         {
+            if (SelectedBook != null)
+            {
+                _model.AddBook(SelectedBook);
+            }
+            else
+            {
+                _model.AddBook(new BookViewModel(-1)
+                {
+                    Title = this.Title,
+                    Description = this.Description,
+                    Pages = this.Pages,
+                    PublicationYear = this.PublicationYear,
+                    Quantity = this.Quantity,
+                    CostPrice = this.CostPrice,
+                    SalePrice = this.SalePrice,
+                    Genre = this.Genre,
+                    AuthorName = this.AuthorName,
+                    AuthorSurname = this.AuthorSurname,
+                    Publisher = this.Publisher,
+                    Series = this.Series
+                });
+            }
 
+            Reset();
         }
 
         private bool CanCreate() => !IsRequiredFieldsEmpty && IsNumericFieldsCorrect;
 
         private void Cancel()
         {
-
+            OnSelectionChange(this, new PropertyChangedEventArgs(nameof(SelectedBook)));
         }
 
         private bool CanCancel() => WereFieldChanged;
 
         private void Clear()
         {
-            _title = "";
-            _description = "";
-            _pages = "";
-            _publicationYear = "";
-            _quantity = "";
-            _costPrice = "";
-            _salePrice = "";
-            _genre = "";
-            _authorName = "";
-            _authorSurname = "";
-            _authorPatronymic = "";
-            _publisher = "";
-            _series = "";
+            Title = "";
+            Description = "";
+            Pages = "";
+            PublicationYear = "";
+            Quantity = "";
+            CostPrice = "";
+            SalePrice = "";
+            Genre = "";
+            AuthorName = "";
+            AuthorSurname = "";
+            AuthorPatronymic = "";
+            Publisher = "";
+            Series = "";
         }
 
         private bool CanClear() => !IsRequiredFieldsEmpty;
 
         private void Delete()
         {
-
+            _model.DeleteBook(SelectedBook.Id);
+            Reset();
         }
 
         private bool CanDelete() => IsBookSelected;
-
-        private void OnSelectionChange(object sender, PropertyChangedEventArgs e)
-        {
-
-        }
-
-        private void SetProperty<T>(ref T oldValue, T newValue, string propertyName)
-        {
-            if (!oldValue?.Equals(newValue) ?? newValue != null)
-            {
-                oldValue = newValue;
-
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 }

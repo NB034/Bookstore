@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Bookstore.DataAccess\Bookstore.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Configuration\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

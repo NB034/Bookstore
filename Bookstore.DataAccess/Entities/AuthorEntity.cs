@@ -1,7 +1,7 @@
 ﻿
 namespace Bookstore.DataAccess.Entities
 {
-    internal class AuthorEntity
+    public class AuthorEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
