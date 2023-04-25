@@ -52,76 +52,76 @@
             <UniformGrid Grid.Row="0" Margin="5" Columns="2" Style="{StaticResource UniformGridStyle}">
                 <DockPanel>
                     <Label Content="Title:"/>
-                    <TextBox Text="{Binding Title, Mode=TwoWay}" 
+                    <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              BorderBrush="{Binding Title, Converter={StaticResource RequiredFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Publisher:"/>
-                    <TextBox Text="{Binding Publisher, Mode=TwoWay}" 
+                    <TextBox Text="{Binding Publisher, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              BorderBrush="{Binding Publisher, Converter={StaticResource RequiredFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Author name:"/>
-                    <TextBox Text="{Binding AuthorName, Mode=TwoWay}" 
+                    <TextBox Text="{Binding AuthorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              BorderBrush="{Binding AuthorName, Converter={StaticResource RequiredFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Pages:"/>
-                    <TextBox Text="{Binding Pages, Mode=TwoWay}"
+                    <TextBox Text="{Binding Pages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              BorderBrush="{Binding Pages, Converter={StaticResource NumericFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Author surname:"/>
-                    <TextBox Text="{Binding AuthorSurname, Mode=TwoWay}" 
+                    <TextBox Text="{Binding AuthorSurname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              BorderBrush="{Binding AuthorSurname, Converter={StaticResource RequiredFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Genre:"/>
-                    <TextBox Text="{Binding Genre, Mode=TwoWay}" 
+                    <TextBox Text="{Binding Genre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              BorderBrush="{Binding Genre, Converter={StaticResource RequiredFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Author patronymic"/>
-                    <TextBox Text="{Binding AuthorPatronymic, Mode=TwoWay}"/>
+                    <TextBox Text="{Binding AuthorPatronymic, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Year:"/>
-                    <TextBox Text="{Binding PublicationYear, Mode=TwoWay}" 
+                    <TextBox Text="{Binding PublicationYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              BorderBrush="{Binding PublicationYear, Converter={StaticResource NumericAndRequiredConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Cost price:"/>
-                    <TextBox Text="{Binding CostPrice, Mode=TwoWay}"
+                    <TextBox Text="{Binding CostPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              BorderBrush="{Binding CostPrice, Converter={StaticResource NumericFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Series:"/>
-                    <TextBox Text="{Binding Series, Mode=TwoWay}"/>
+                    <TextBox Text="{Binding Series, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Sale price:"/>
-                    <TextBox Text="{Binding SalePrice, Mode=TwoWay}"
+                    <TextBox Text="{Binding SalePrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              BorderBrush="{Binding SalePrice, Converter={StaticResource NumericFieldConverter}}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Description:"/>
-                    <TextBox Text="{Binding Description, Mode=TwoWay}"/>
+                    <TextBox Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </DockPanel>
 
                 <DockPanel>
                     <Label Content="Quantity:"/>
-                    <TextBox Text="{Binding Quantity, Mode=TwoWay}"
+                    <TextBox Text="{Binding Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              BorderBrush="{Binding Quantity, Converter={StaticResource NumericFieldConverter}}"/>
                 </DockPanel>
             </UniformGrid>

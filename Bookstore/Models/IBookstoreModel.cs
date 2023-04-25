@@ -1,12 +1,13 @@
 ﻿using Bookstore.ViewModels;
+using System.Threading.Tasks;
 
 namespace Bookstore.Models
 {
     interface IBookstoreModel
     {
-        BookViewModel[] GetBooks();
-        void AddBook(BookViewModel book);
-        void UpdateBook(BookViewModel book);
-        void DeleteBook(int id);
+        Task<BookViewModel[]> GetBooks();
+        Task AddBook(BookViewModel book);
+        Task UpdateBook(BookViewModel book);
+        Task DeleteBook(int id);
     }
 }

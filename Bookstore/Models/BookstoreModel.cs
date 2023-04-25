@@ -7,6 +7,7 @@ using Bookstore.DataAccess.Entities;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Bookstore.Models
 {
@@ -26,9 +27,9 @@ namespace Bookstore.Models
             _dbContext = ContextBuilder.GetBookstoreDbContext(connectionString);
         }
 
-        public void AddBook(BookViewModel book)
+        public async Task AddBook(BookViewModel book)
         {
-            _dbContext.BookEntities.Add(new BookEntity
+            await _dbContext.BookEntities.AddAsync(new BookEntity
             {
                 Title = book.Title,
                 Description = book.Description,
@@ -42,26 +43,26 @@ namespace Bookstore.Models
                 PublisherId = CreatePublisherIfNotExist(book.Publisher),
                 SeriesId = CreateSeriesIfNotExist(book.Series)
             });
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void DeleteBook(int id)
+        public async Task DeleteBook(int id)
         {
-            var book = _dbContext.BookEntities.Where(b => b.Id == id).FirstOrDefault();
+            var book = await _dbContext.BookEntities.Where(b => b.Id == id).FirstOrDefaultAsync();
             if (book == null) throw new ArgumentException($"The item with id {id} is not exist");
             var ids = new int[] { book.AuthorId, book.PublisherId, book.GenreId, book.SeriesId };
             _dbContext.BookEntities.Remove(book);
             _dbContext.SaveChanges();
 
-            DeleteAuthorIfNotUsed(ids[0]);
-            DeletePublisherIfNotUsed(ids[1]);
-            DeleteGenreIfNotUsed(ids[2]);
-            DeleteSeriesIfNotUsed(ids[3]);
+            await DeleteAuthorIfNotUsed(ids[0]);
+            await DeletePublisherIfNotUsed(ids[1]);
+            await DeleteGenreIfNotUsed(ids[2]);
+            await DeleteSeriesIfNotUsed(ids[3]);
         }
 
-        public BookViewModel[] GetBooks()
+        public async Task<BookViewModel[]> GetBooks()
         {
-            var books = _dbContext.BookEntities;
+            var books = await _dbContext.BookEntities.ToArrayAsync();
             List<BookViewModel> result = new List<BookViewModel>();
 
             foreach (var book in books)
@@ -89,9 +90,9 @@ namespace Bookstore.Models
             return result.ToArray();
         }
 
-        public void UpdateBook(BookViewModel bookVm)
+        public async Task UpdateBook(BookViewModel bookVm)
         {
-            var book = _dbContext.BookEntities.Where(b => b.Id == bookVm.Id).FirstOrDefault();
+            var book = await _dbContext.BookEntities.Where(b => b.Id == bookVm.Id).FirstOrDefaultAsync();
             if (book == null) throw new ArgumentException($"The item with id {bookVm.Id} is not exist");
 
             book.Title = bookVm.Title;
@@ -105,8 +106,9 @@ namespace Bookstore.Models
             book.AuthorId = CreateAuthorIfNotExist(bookVm.AuthorName, bookVm.AuthorSurname, bookVm.AuthorPatronymic);
             book.PublisherId = CreatePublisherIfNotExist(bookVm.Publisher);
             book.SeriesId = CreateSeriesIfNotExist(bookVm.Series);
-            
-            _dbContext.SaveChanges();
+
+            _dbContext.Update(book);
+            await _dbContext.SaveChangesAsync();
         }
     }
 
@@ -158,32 +160,32 @@ namespace Bookstore.Models
             return newItem.Entity.Id;
         }
 
-        private void DeleteSeriesIfNotUsed(int seriesId)
+        private async Task DeleteSeriesIfNotUsed(int seriesId)
         {
-            if (_dbContext.BookEntities.FirstOrDefault(b => b.SeriesId == seriesId) != null) return;
-            _dbContext.SeriesEntities.Remove(_dbContext.SeriesEntities.Where(s => s.Id == seriesId).First());
-            _dbContext.SaveChanges();
+            if (await _dbContext.BookEntities.FirstOrDefaultAsync(b => b.SeriesId == seriesId) != null) return;
+            _dbContext.SeriesEntities.Remove(await _dbContext.SeriesEntities.Where(s => s.Id == seriesId).FirstAsync());
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void DeletePublisherIfNotUsed(int publisherId)
+        private async Task DeletePublisherIfNotUsed(int publisherId)
         {
-            if (_dbContext.BookEntities.FirstOrDefault(b => b.PublisherId == publisherId) != null) return;
-            _dbContext.PublisherEntities.Remove(_dbContext.PublisherEntities.Where(p => p.Id == publisherId).First());
-            _dbContext.SaveChanges();
+            if (await _dbContext.BookEntities.FirstOrDefaultAsync(b => b.PublisherId == publisherId) != null) return;
+            _dbContext.PublisherEntities.Remove(await _dbContext.PublisherEntities.Where(p => p.Id == publisherId).FirstAsync());
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void DeleteGenreIfNotUsed(int genreId)
+        private async Task DeleteGenreIfNotUsed(int genreId)
         {
-            if (_dbContext.BookEntities.FirstOrDefault(b => b.GenreId == genreId) != null) return;
-            _dbContext.GenreEntities.Remove(_dbContext.GenreEntities.Where(g => g.Id == genreId).First());
-            _dbContext.SaveChanges();
+            if (await _dbContext.BookEntities.FirstOrDefaultAsync(b => b.GenreId == genreId) != null) return;
+            _dbContext.GenreEntities.Remove(await _dbContext.GenreEntities.Where(g => g.Id == genreId).FirstAsync());
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void DeleteAuthorIfNotUsed(int authorId)
+        private async Task DeleteAuthorIfNotUsed(int authorId)
         {
-            if (_dbContext.BookEntities.FirstOrDefault(b => b.AuthorId == authorId) != null) return;
-            _dbContext.AuthorEntities.Remove(_dbContext.AuthorEntities.Where(a => a.Id == authorId).First());
-            _dbContext.SaveChanges();
+            if (await _dbContext.BookEntities.FirstOrDefaultAsync(b => b.AuthorId == authorId) != null) return;
+            _dbContext.AuthorEntities.Remove(await _dbContext.AuthorEntities.Where(a => a.Id == authorId).FirstAsync());
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

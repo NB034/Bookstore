@@ -2,9 +2,10 @@
 using Bookstore.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Bookstore.ViewModels
 {
@@ -70,10 +71,10 @@ namespace Bookstore.ViewModels
                 "Genre"
             };
 
-            Books = new List<BookViewModel>(_model.GetBooks());
+            Books = new List<BookViewModel>(_model.GetBooks().Result);
 
-            _searchCommand = new AutoEventCommandBase(_ => Search(), _ => true);
-            _resetCommand = new AutoEventCommandBase(_ => Reset(), _ => true);
+            _searchCommand = new AutoEventCommandBase(_ => _ = Search(), _ => true);
+            _resetCommand = new AutoEventCommandBase(_ => _ = Reset(), _ => true);
             _saveCommand = new AutoEventCommandBase(_ => Save(), _ => CanSave());
             _createCommand = new AutoEventCommandBase(_ => Create(), _ => CanCreate());
             _cancelCommand = new AutoEventCommandBase(_ => Cancel(), _ => CanCancel());
@@ -137,6 +138,11 @@ namespace Bookstore.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        private void HandleException(Exception exception)
+        {
+            MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
 
@@ -161,71 +167,59 @@ namespace Bookstore.ViewModels
         public AutoEventCommandBase ClearCommand => _clearCommand;
         public AutoEventCommandBase DeleteCommand => _deleteCommand;
 
-        private void Search()
+        private async Task Search()
         {
-            BookViewModel[] selection;
-            switch (SelectedItem)
+            try
             {
-                case "Title":
-                    selection = Books.Where(b => b.Title.Contains(SearchTextBox)).ToArray();
-                    break;
+                BookViewModel[] selection = await _model.GetBooks();
+                switch (SelectedItem)
+                {
+                    case "Title":
+                        selection = selection.Where(b => b.Title.Contains(SearchTextBox)).ToArray();
+                        break;
 
-                case "Author":
-                    selection = Books.Where(b =>
-                    b.AuthorName.Contains(SearchTextBox)
-                    || b.AuthorSurname.Contains(SearchTextBox)
-                    || b.AuthorPatronymic.Contains(SearchTextBox)).ToArray();
-                    break;
+                    case "Author":
+                        selection = selection.Where(b =>
+                        b.AuthorName.Contains(SearchTextBox)
+                        || b.AuthorSurname.Contains(SearchTextBox)
+                        || (b.AuthorPatronymic?.Contains(SearchTextBox) ?? false)).ToArray();
+                        break;
 
-                case "Genre":
-                    selection = Books.Where(b => b.Genre.Contains(SearchTextBox)).ToArray();
-                    break;
+                    case "Genre":
+                        selection = selection.Where(b => b.Genre.Contains(SearchTextBox)).ToArray();
+                        break;
 
-                default:
-                    return;
+                    default:
+                        return;
+                }
+                Books = new List<BookViewModel>(selection);
+                SelectedBook = null;
             }
-
-            Reset();
-        }
-
-        private void Reset()
-        {
-            Books.Clear();
-            Books = new List<BookViewModel>(_model.GetBooks());
-            SelectedBook = null;
-        }
-
-        private void Save()
-        {
-            _model.UpdateBook(new BookViewModel(SelectedBook.Id)
+            catch (Exception ex)
             {
-                Title = SelectedBook.Title,
-                Description = SelectedBook.Description,
-                Pages = SelectedBook.Pages,
-                PublicationYear = SelectedBook.PublicationYear,
-                Quantity = SelectedBook.Quantity,
-                CostPrice = SelectedBook.CostPrice,
-                SalePrice = SelectedBook.SalePrice,
-                Genre = SelectedBook.Genre,
-                AuthorName = SelectedBook.AuthorName,
-                AuthorSurname = SelectedBook.AuthorSurname,
-                Publisher = SelectedBook.Publisher,
-                Series = SelectedBook.Series
-            });
-            Reset();
-        }
-
-        private bool CanSave() => WereFieldChanged && !IsRequiredFieldsEmpty && IsNumericFieldsCorrect;
-
-        private void Create()
-        {
-            if (SelectedBook != null)
-            {
-                _model.AddBook(SelectedBook);
+                HandleException(ex);
             }
-            else
+        }
+
+        private async Task Reset()
+        {
+            try
             {
-                _model.AddBook(new BookViewModel(-1)
+                Books.Clear();
+                Books = new List<BookViewModel>(await _model.GetBooks());
+                SelectedBook = null;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+        }
+
+        private async void Save()
+        {
+            try
+            {
+                await _model.UpdateBook(new BookViewModel(SelectedBook.Id)
                 {
                     Title = this.Title,
                     Description = this.Description,
@@ -240,9 +234,44 @@ namespace Bookstore.ViewModels
                     Publisher = this.Publisher,
                     Series = this.Series
                 });
+                await Reset();
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
             }
 
-            Reset();
+        }
+
+        private bool CanSave() => WereFieldChanged && !IsRequiredFieldsEmpty && IsNumericFieldsCorrect;
+
+        private async void Create()
+        {
+            if (SelectedBook != null)
+            {
+                await _model.AddBook(SelectedBook);
+            }
+            else
+            {
+                await _model.AddBook(new BookViewModel(-1)
+                {
+                    Title = this.Title,
+                    Description = this.Description,
+                    Pages = this.Pages,
+                    PublicationYear = this.PublicationYear,
+                    Quantity = this.Quantity,
+                    CostPrice = this.CostPrice,
+                    SalePrice = this.SalePrice,
+                    Genre = this.Genre,
+                    AuthorName = this.AuthorName,
+                    AuthorSurname = this.AuthorSurname,
+                    AuthorPatronymic = this.AuthorPatronymic,
+                    Publisher = this.Publisher,
+                    Series = this.Series
+                });
+            }
+
+            await Reset();
         }
 
         private bool CanCreate() => !IsRequiredFieldsEmpty && IsNumericFieldsCorrect;
@@ -273,10 +302,18 @@ namespace Bookstore.ViewModels
 
         private bool CanClear() => !IsRequiredFieldsEmpty;
 
-        private void Delete()
+        private async void Delete()
         {
-            _model.DeleteBook(SelectedBook.Id);
-            Reset();
+            try
+            {
+                await _model.DeleteBook(SelectedBook.Id);
+                await Reset();
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+
         }
 
         private bool CanDelete() => IsBookSelected;
